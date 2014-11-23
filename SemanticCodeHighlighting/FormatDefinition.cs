@@ -14,11 +14,11 @@ namespace SemanticCodeHighlighting {
 	[Name("SemanticCodeHighlighting")]
 	[UserVisible(true)] //this should be visible to the end user
 	[Order(Before = Priority.Default)] //set the priority to be after the default classifiers
-	internal sealed class SemanticCodeHighlightingFormat : ClassificationFormatDefinition {
+	internal sealed class FormatDefinition : ClassificationFormatDefinition {
 		/// <summary>
 		/// Defines the visual format for the "SemanticCodeHighlighting" classification type
 		/// </summary>
-		public SemanticCodeHighlightingFormat() {
+		public FormatDefinition() {
 			DisplayName = "SemanticCodeHighlighting"; //human readable version of the name
 			BackgroundColor = Colors.BlueViolet;
 			TextDecorations = System.Windows.TextDecorations.Underline;

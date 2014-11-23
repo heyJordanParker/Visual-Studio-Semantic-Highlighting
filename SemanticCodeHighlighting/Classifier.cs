@@ -1,42 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 
 namespace SemanticCodeHighlighting {
 
-	#region Provider definition
-	/// <summary>
-	/// This class causes a classifier to be added to the set of classifiers. Since 
-	/// the content type is set to "text", this classifier applies to all text files
-	/// </summary>
-	[Export(typeof(IClassifierProvider))]
-	[ContentType("text")]
-	internal class SemanticCodeHighlightingProvider : IClassifierProvider {
-		/// <summary>
-		/// Import the classification registry to be used for getting a reference
-		/// to the custom classification type later.
-		/// </summary>
-		[Import]
-		internal IClassificationTypeRegistryService ClassificationRegistry = null; // Set via MEF
-
-		public IClassifier GetClassifier(ITextBuffer buffer) {
-			return buffer.Properties.GetOrCreateSingletonProperty<SemanticCodeHighlighting>(delegate { return new SemanticCodeHighlighting(ClassificationRegistry); });
-		}
-	}
-	#endregion //provider def
-
-	#region Classifier
 	/// <summary>
 	/// Classifier that classifies all text as an instance of the OrinaryClassifierType
 	/// </summary>
-	class SemanticCodeHighlighting : IClassifier {
+	class Classifier : IClassifier {
 		IClassificationType _classificationType;
 
-		internal SemanticCodeHighlighting(IClassificationTypeRegistryService registry) {
+		internal Classifier(IClassificationTypeRegistryService registry) {
 			_classificationType = registry.GetClassificationType("SemanticCodeHighlighting");
 		}
 
@@ -51,7 +27,7 @@ namespace SemanticCodeHighlighting {
 			
 			
 
-			List<ClassificationSpan> classifications = new List<ClassificationSpan>();
+			var classifications = new List<ClassificationSpan>();
 			classifications.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, new Span(span.Start, span.Length)),
 														   _classificationType));
 			return classifications;
@@ -64,5 +40,4 @@ namespace SemanticCodeHighlighting {
 		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 #pragma warning restore 67
 	}
-	#endregion //Classifier
 }
