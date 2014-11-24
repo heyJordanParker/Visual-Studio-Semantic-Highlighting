@@ -10,9 +10,11 @@ namespace SemanticCodeHighlighting {
 	/// Classifier that classifies all text as an instance of the OrinaryClassifierType
 	/// </summary>
 	class Classifier : IClassifier {
-		IClassificationType _classificationType;
+		private IClassificationType _classificationType;
+		private ITextBuffer _textBuffer;
 
-		internal Classifier(IClassificationTypeRegistryService registry) {
+		internal Classifier(ITextBuffer textBuffer, IClassificationTypeRegistryService registry) {
+			_textBuffer = textBuffer;
 			_classificationType = registry.GetClassificationType("SemanticCodeHighlighting");
 		}
 
@@ -24,8 +26,6 @@ namespace SemanticCodeHighlighting {
 		/// <returns>A list of ClassificationSpans that represent spans identified to be of this classification</returns>
 		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) {
 			//create a list to hold the results
-			
-			
 
 			var classifications = new List<ClassificationSpan>();
 			classifications.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, new Span(span.Start, span.Length)),

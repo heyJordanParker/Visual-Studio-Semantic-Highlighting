@@ -16,11 +16,11 @@ namespace SemanticCodeHighlighting {
 		/// to the custom classification type later.
 		/// </summary>
 		[Import]
-		internal IClassificationTypeRegistryService classificationRegistry = null; // Set via MEF
+		internal IClassificationTypeRegistryService classificationRegistry; // Set via MEF
 
-		public IClassifier GetClassifier(ITextBuffer buffer) {
-			return buffer.Properties.GetOrCreateSingletonProperty<Classifier>(
-				() => new Classifier(classificationRegistry));
+		public IClassifier GetClassifier(ITextBuffer textBuffer) {
+			return textBuffer.Properties.GetOrCreateSingletonProperty(
+				() => new Classifier(textBuffer, classificationRegistry));
 		}
 	}
 }

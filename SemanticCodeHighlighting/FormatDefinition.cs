@@ -19,7 +19,7 @@ namespace SemanticCodeHighlighting {
 		/// Defines the visual format for the "SemanticCodeHighlighting" classification type
 		/// </summary>
 		public FormatDefinition() {
-			DisplayName = "SemanticCodeHighlighting"; //human readable version of the name
+			DisplayName = "Semantic Code Highlighting"; //human readable version of the name
 			BackgroundColor = Colors.BlueViolet;
 			TextDecorations = System.Windows.TextDecorations.Underline;
 		}
