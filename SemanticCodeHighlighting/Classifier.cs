@@ -25,9 +25,12 @@ namespace SemanticCodeHighlighting {
 		/// <param name="trackingSpan">The span currently being classified</param>
 		/// <returns>A list of ClassificationSpans that represent spans identified to be of this classification</returns>
 		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) {
-			//create a list to hold the results
-
 			var classifications = new List<ClassificationSpan>();
+
+			//create a list to hold the results
+			if(span.IsEmpty)
+				return classifications;
+
 			classifications.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, new Span(span.Start, span.Length)),
 														   _classificationType));
 			return classifications;

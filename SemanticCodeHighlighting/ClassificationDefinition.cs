@@ -9,6 +9,6 @@ namespace SemanticCodeHighlighting {
 		/// </summary>
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name("SemanticCodeHighlighting")]
-		internal static ClassificationTypeDefinition semanticCodeHighlightingType = null;
+		internal static ClassificationTypeDefinition classificationTypeDefinition = null;
 	}
 }

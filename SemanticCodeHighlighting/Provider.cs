@@ -7,9 +7,9 @@ namespace SemanticCodeHighlighting {
 	/// <summary>
 	/// This class causes a classifier to be added to the set of classifiers. Since 
 	/// the content type is set to "text", this classifier applies to all text files
-	/// </summary>
+	/// </summary> [
 	[Export(typeof(IClassifierProvider))]
-	[ContentType("text")]
+	[ContentType("code")]
 	internal class Provider : IClassifierProvider {
 		/// <summary>
 		/// Import the classification registry to be used for getting a reference
