@@ -31,6 +31,8 @@ namespace SemanticCodeHighlighting {
 			if(span.IsEmpty)
 				return classifications;
 
+			
+
 			classifications.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, new Span(span.Start, span.Length)),
 														   _classificationType));
 			return classifications;

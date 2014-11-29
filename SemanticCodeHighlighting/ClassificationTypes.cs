@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 namespace SemanticCodeHighlighting {
-	internal static class ClassificationDefinition {
+	internal static class ClassificationTypes {
 		/// <summary>
 		/// Defines the "SemanticCodeHighlighting" classification type.
 		/// </summary>

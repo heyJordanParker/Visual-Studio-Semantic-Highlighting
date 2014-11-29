@@ -59,7 +59,7 @@
   <ItemGroup>
     <Compile Include="FormatDefinition.cs" />
     <Compile Include="Provider.cs" />
-    <Compile Include="ClassificationDefinition.cs" />
+    <Compile Include="ClassificationTypes.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
