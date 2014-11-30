@@ -57,10 +57,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormatDefinition.cs" />
-    <Compile Include="Provider.cs" />
+    <Compile Include="ClassificationFormats.cs" />
+    <Compile Include="Colorizer.cs" />
+    <Compile Include="ViewCreationListener.cs" />
     <Compile Include="ClassificationTypes.cs" />
-    <Compile Include="Classifier.cs" />
+    <Compile Include="FormatMapWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
