@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -20,7 +22,7 @@ namespace SemanticCodeHighlighting {
 			_typeRegistry = typeRegistry;
 			_baseClassificationType = typeRegistry.GetClassificationType("SemanticCodeHighlighting");
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
-			
+
 			_formatMap.ClassificationFormatMappingChanged += FormatMapChanged;
 			textView.GotAggregateFocus += OnFirstFocus;
 		}
@@ -43,14 +45,10 @@ namespace SemanticCodeHighlighting {
 			try {
 				_updating = true;
 
-				foreach(var classification in _formatMap.CurrentPriorityOrder.Where(c => c != null)) {
-					string name = classification.Classification.ToLowerInvariant();
-					if(name.Contains("variable")) {
-						Bold(classification);
-					}
+				var classificationFiler = _formatMap.CurrentPriorityOrder.Where(c => c != null && c.Classification.ToLowerInvariant().Contains("variable"));
+				foreach(var classification in classificationFiler) {
+					Bold(classification);
 				}
-
-
 			} finally {
 				_updating = false;
 			}
