@@ -20,8 +20,10 @@ namespace SemanticCodeHighlighting {
 		public FormatMapWatcher(IWpfTextView textView, IClassificationFormatMap formatMap, IClassificationTypeRegistryService typeRegistry) {
 			_formatMap = formatMap;
 			_typeRegistry = typeRegistry;
-			_baseClassificationType = typeRegistry.GetClassificationType("SemanticCodeHighlighting");
+			_baseClassificationType = typeRegistry.GetClassificationType(Config.ClassificationName);
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
+
+			
 
 			_formatMap.ClassificationFormatMappingChanged += FormatMapChanged;
 			textView.GotAggregateFocus += OnFirstFocus;
@@ -29,7 +31,6 @@ namespace SemanticCodeHighlighting {
 
 		private void OnFirstFocus(object textView, EventArgs e) {
 			((ITextView) textView).GotAggregateFocus -= OnFirstFocus;
-
 			Colorize();
 		}
 
