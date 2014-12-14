@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
@@ -46,7 +47,9 @@ namespace SemanticCodeHighlighting {
 			try {
 				_updating = true;
 
-				var classificationFiler = _formatMap.CurrentPriorityOrder.Where(c => c != null && c.Classification.ToLowerInvariant().Contains("variable"));
+				var classificationTypes = _formatMap.CurrentPriorityOrder;
+				var allFormats = classificationTypes.Aggregate("", (cur, next) => cur + next + ',');
+				var classificationFiler = classificationTypes.Where(c => c != null && c.Classification.ToLowerInvariant().Contains("identifier"));
 				foreach(var classification in classificationFiler) {
 					Bold(classification);
 				}

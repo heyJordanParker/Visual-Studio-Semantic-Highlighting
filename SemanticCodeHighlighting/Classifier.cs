@@ -6,13 +6,14 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace SemanticCodeHighlighting {
 	public class Classifier : ITagger<ClassificationTag> {
 		private IClassificationType _classification;
-		private ITagAggregator<ClassificationTag> _aggregator;
+		private ITagAggregator<IClassificationTag> _aggregator;
 
 #pragma warning disable 67
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -20,7 +21,7 @@ namespace SemanticCodeHighlighting {
 
 		internal Classifier(
 			IClassificationTypeRegistryService registry,
-			ITagAggregator<ClassificationTag> aggregator) {
+			ITagAggregator<IClassificationTag> aggregator) {
 			_classification = registry.GetClassificationType(Config.ClassificationName);
 			_aggregator = aggregator;
 		}
@@ -31,23 +32,32 @@ namespace SemanticCodeHighlighting {
 			}
 
 			ITextSnapshot snapshot = spans[0].Snapshot;
+			var contentType = snapshot.TextBuffer.ContentType;
+			
 
-//			ILanguageKeywords keywords = GetKeywordsByContentType(snapshot.TextBuffer.ContentType);
-//			if (keywords == null)
-//			{
-//				yield break;
-//			}
 
+			// try the IClassifier thingie
 			// using this we can find the already classified variables and simply count them and add classification tags
-			foreach(var classifiedSpan in from cs in _aggregator.GetTags(spans)
-				let name = cs.Tag.ClassificationType.Classification.ToLowerInvariant()
-				where name.Contains("variable")
-				let classifiedSpans = cs.Span.GetSpans(snapshot)
-				where classifiedSpans.Count > 0
-				select classifiedSpans[0]) {
+			var tags = _aggregator.GetTags(spans);
+			var classifications = tags.Select(s => s.Tag.ClassificationType);
+
+			foreach(var classifiedSpan in tags) //from cs in 
+//				let name = cs.Tag.ClassificationType.Classification.ToLowerInvariant()
+//				where name.Contains("User Types")
+//				)
+			{
 //				string text = classifiedSpan.GetText();
 //				if (keywords.ControlFlow.Contains(text))
-				yield return new TagSpan<ClassificationTag>(classifiedSpan, new ClassificationTag(_classification));
+				//"identifier" "keyword"
+
+				var classification = classifiedSpan.Tag.ClassificationType.Classification;
+				if(!classification.ToLowerInvariant().Equals("identifier".ToLowerInvariant()))
+					continue;
+
+				foreach(SnapshotSpan span in classifiedSpan.Span.GetSpans(snapshot)) {
+					
+					yield return new TagSpan<ClassificationTag>(span, new ClassificationTag(_classification));
+				}
 			}
 		}
 	}
