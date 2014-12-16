@@ -38,24 +38,16 @@ namespace SemanticCodeHighlighting {
 
 			// try the IClassifier thingie
 			// using this we can find the already classified variables and simply count them and add classification tags
-			var tags = _aggregator.GetTags(spans);
+			var tags = _aggregator.GetTags(spans).ToArray();
 			var classifications = tags.Select(s => s.Tag.ClassificationType);
 
-			foreach(var classifiedSpan in tags) //from cs in 
-//				let name = cs.Tag.ClassificationType.Classification.ToLowerInvariant()
-//				where name.Contains("User Types")
-//				)
-			{
-//				string text = classifiedSpan.GetText();
-//				if (keywords.ControlFlow.Contains(text))
-				//"identifier" "keyword"
+			foreach(var classifiedSpan in tags) {
 
 				var classification = classifiedSpan.Tag.ClassificationType.Classification;
 				if(!classification.ToLowerInvariant().Equals("identifier".ToLowerInvariant()))
 					continue;
 
 				foreach(SnapshotSpan span in classifiedSpan.Span.GetSpans(snapshot)) {
-					
 					yield return new TagSpan<ClassificationTag>(span, new ClassificationTag(_classification));
 				}
 			}
