@@ -15,14 +15,14 @@ namespace SemanticCodeHighlighting {
 		private readonly IClassificationFormatMap _formatMap;
 		private IClassificationType _baseClassificationType;
 		private IClassificationTypeRegistryService _typeRegistry;
-		private Colorizer _colorizer;
+		private Colorization.Colorizer _colorizer;
 		private bool _updating;
 
 		public FormatMapWatcher(IWpfTextView textView, IClassificationFormatMap formatMap, IClassificationTypeRegistryService typeRegistry) {
 			_formatMap = formatMap;
 			_typeRegistry = typeRegistry;
 			_baseClassificationType = typeRegistry.GetClassificationType(Config.ClassificationName);
-			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
+			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorization.Colorizer());
 
 			
 

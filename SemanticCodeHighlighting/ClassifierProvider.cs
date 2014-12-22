@@ -19,7 +19,7 @@ namespace SemanticCodeHighlighting {
 			internal IBufferTagAggregatorFactoryService aggregator;
 
 			public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
-				return new Classifier(classificationRegistry, aggregator.CreateTagAggregator<IClassificationTag>(buffer)) as ITagger<T>;
+				return new Classifier(classificationRegistry, aggregator.CreateTagAggregator<IClassificationTag>(buffer), textView) as ITagger<T>;
 			}
 		} 
 	}

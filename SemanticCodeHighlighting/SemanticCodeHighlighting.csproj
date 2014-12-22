@@ -66,10 +66,11 @@
     <Compile Include="ClassificationFormats.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="ClassifierProvider.cs" />
-    <Compile Include="ColoredIdentifier.cs" />
-    <Compile Include="ColorHCL.cs" />
-    <Compile Include="ColorHCLTests.cs" />
-    <Compile Include="Colorizer.cs" />
+    <Compile Include="Colorization\Colorization.cs" />
+    <Compile Include="Colorization\ColorHCL.cs" />
+    <Compile Include="Colorization\ColorHCLTests.cs" />
+    <Compile Include="Colorization\ColorizedSpan.cs" />
+    <Compile Include="Colorization\Colorizer.cs" />
     <Compile Include="Config.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

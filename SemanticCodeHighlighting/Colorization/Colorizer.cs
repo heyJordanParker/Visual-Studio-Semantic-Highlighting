@@ -1,8 +1,10 @@
-﻿using System.Windows.Media;
-using Colorspace;
+﻿using Microsoft.VisualStudio.Text.Tagging;
 
-namespace SemanticCodeHighlighting {
+namespace SemanticCodeHighlighting.Colorization {
 	public class Colorizer {
+		private const double BaseLighting = 0.4;
+
+		//cache Colorization instances to speed up further lookups
 
 		private void CreateUniqueClassificationTypeForColor(string variableName) {
 			//			_typeRegistry.CreateTransientClassificationType(_baseClassificationType)
@@ -10,15 +12,15 @@ namespace SemanticCodeHighlighting {
 			//			link Classification Type and variableName
 
 
-			ColorLAB lab = new ColorLAB(1, 70, -53, 32);
 			
-			//r = 61.91
-			//-58.8794102 
 
 			
 			// take into account prefixes, prioritize capital letters when parsing
 			// a prefix, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}
 
+		public ColorizedSpan[] GetColorizedSpans(IMappingTagSpan<IClassificationTag>[] tags) {
+			return null;
+		}
 	}
 }
