@@ -2,11 +2,13 @@
 
 namespace SemanticCodeHighlighting.Tests {
 	[TestFixture]
-	public class ParserTests {
+	public class ColorizerTests {
 
 		[Test]
-		public void ParsePrefixes() {
+		public void ColorizeSingleTextEntry() {
+
 			
+
 		}
 
 

@@ -14,7 +14,6 @@ namespace SemanticCodeHighlighting {
 		private readonly IClassificationType _classification;
 		private readonly ITagAggregator<IClassificationTag> _aggregator;
 		private Colorizer _colorizer;
-		private Parser _parser;
 
 #pragma warning disable 67
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -24,7 +23,6 @@ namespace SemanticCodeHighlighting {
 			_classification = registry.GetClassificationType(Config.ClassificationName);
 			_aggregator = aggregator;
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
-			_parser = textView.Properties.GetOrCreateSingletonProperty(() => new Parser());
 		}
 
 		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
