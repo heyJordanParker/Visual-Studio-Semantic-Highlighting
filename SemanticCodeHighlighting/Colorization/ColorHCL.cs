@@ -6,6 +6,7 @@ namespace SemanticCodeHighlighting.Colorization {
 	public struct ColorHCL {
 
 		public const double PI = Math.PI;
+		public const double DegreeToRadian = PI/180;
 
 		private readonly double _alpha;
 		private readonly double _h;
@@ -30,6 +31,13 @@ namespace SemanticCodeHighlighting.Colorization {
 			_c = Math.Sqrt(labColor.A*labColor.A + labColor.B*labColor.B);
 			_l = labColor.L;
 			_alpha = labColor.Alpha;
+		}
+
+		public ColorLAB ToLab() {
+			var l = L;
+			var a = Math.Cos(DegreeToRadian*H)*C;
+			var b = Math.Sin(DegreeToRadian*H)*C;
+			return new ColorLAB(Alpha, l, a, b);
 		}
 
 

@@ -14,6 +14,7 @@ namespace SemanticCodeHighlighting {
 		private readonly IClassificationType _classification;
 		private readonly ITagAggregator<IClassificationTag> _aggregator;
 		private Colorizer _colorizer;
+		private Parser _parser;
 
 #pragma warning disable 67
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -23,6 +24,7 @@ namespace SemanticCodeHighlighting {
 			_classification = registry.GetClassificationType(Config.ClassificationName);
 			_aggregator = aggregator;
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
+			_parser = textView.Properties.GetOrCreateSingletonProperty(() => new Parser());
 		}
 
 		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -37,11 +39,11 @@ namespace SemanticCodeHighlighting {
 			// using this we can find the already classified variables and simply count them and add classification tags
 			var tags = _aggregator.GetTags(spans).Where((span) => span.Tag.ClassificationType.Classification.Equals("identifier")).ToArray();
 
-			ColorizedSpan[] colorizations = _colorizer.GetColorizedSpans(tags);
-
-			foreach(var colorizedSpan in colorizations) {
-				yield return new TagSpan<ClassificationTag>(colorizedSpan.Span, new ClassificationTag(colorizedSpan.Classification));
-			}
+//			ColorizedSpan[] colorizations = _colorizer.GetColorizedSpans(tags);
+//
+//			foreach(var colorizedSpan in colorizations) {
+//				yield return new TagSpan<ClassificationTag>(colorizedSpan.Span, new ClassificationTag(colorizedSpan.Classification));
+//			}
 
 			foreach(var classifiedSpan in tags) {
 
