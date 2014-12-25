@@ -5,25 +5,25 @@ namespace SemanticCodeHighlighting.Colorization {
 	public class Colorizer {
 		private const double BaseLighting = 0.4;
 
-		//cache Colorization instances to speed up further lookups
+		//cache TextColor instances to speed up further lookups
 
-		private readonly Dictionary<string, Colorization> _colorizerCache;
+		private readonly Dictionary<string, TextColor> _colorizerCache;
 
-		public Colorization this[string key] {
+		public TextColor this[string key] {
 			get { return _colorizerCache[key]; }
 		}
 
 		public Colorizer() {
-			_colorizerCache = new Dictionary<string, Colorization>();
+			_colorizerCache = new Dictionary<string, TextColor>();
 		}
 
 		//rename this method. Logically integrate it
-		public IEnumerable<Colorization> Parse(params string[] colorizationStrings) {
-			var result = new List<Colorization>();
+		public IEnumerable<TextColor> Parse(params string[] colorizationStrings) {
+			var result = new List<TextColor>();
 			foreach(var text in colorizationStrings) {
 				if(!_colorizerCache.ContainsKey(text)) {
-					Colorization colorization = new Colorization(text);
-					_colorizerCache.Add(text, colorization);
+					TextColor textColor = new TextColor(text);
+					_colorizerCache.Add(text, textColor);
 				}
 				result.Add(_colorizerCache[text]);
 			}

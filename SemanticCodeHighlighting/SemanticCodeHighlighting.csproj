@@ -66,9 +66,8 @@
     <Compile Include="ClassificationFormats.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="ClassifierProvider.cs" />
-    <Compile Include="Colorization\Colorization.cs" />
+    <Compile Include="Colorization\TextColor.cs" />
     <Compile Include="Colorization\ColorHCL.cs" />
-    <Compile Include="Colorization\Parser.cs" />
     <Compile Include="Tests\ColorHCLTests.cs" />
     <Compile Include="Colorization\ColorizedSpan.cs" />
     <Compile Include="Colorization\Colorizer.cs" />
@@ -77,7 +76,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Config.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\ParserTests.cs" />
+    <Compile Include="Tests\ColorizerTests.cs" />
     <Compile Include="ViewCreationListener.cs" />
     <Compile Include="ClassificationTypes.cs" />
     <Compile Include="FormatMapWatcher.cs" />
