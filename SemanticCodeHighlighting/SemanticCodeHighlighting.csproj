@@ -66,6 +66,7 @@
     <Compile Include="ClassificationFormats.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="ClassifierProvider.cs" />
+    <Compile Include="Colorization\Prefix.cs" />
     <Compile Include="Colorization\TextColor.cs" />
     <Compile Include="Colorization\ColorHCL.cs" />
     <Compile Include="Tests\ColorHCLTests.cs" />
