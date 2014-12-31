@@ -20,7 +20,8 @@ namespace SemanticCodeHighlighting {
 		[Import]
 		internal IClassificationTypeRegistryService typeRegistry; // Set via MEF
 
-		[Import] internal IClassificationFormatMapService formatMapService;
+		[Import] 
+		internal IClassificationFormatMapService formatMapService;
 
 		public void TextViewCreated(IWpfTextView textView) {
 			textView.Properties.GetOrCreateSingletonProperty(

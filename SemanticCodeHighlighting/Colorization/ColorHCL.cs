@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows.Media;
 using Colorspace;
 
 namespace SemanticCodeHighlighting.Colorization {
@@ -17,6 +18,8 @@ namespace SemanticCodeHighlighting.Colorization {
 		public double H { get { return _h; } }
 		public double C { get { return _c; } }
 		public double L { get { return _l; } }
+
+		public double Saturation { get { return C*L; } }
 
 		public ColorHCL(double h, double c, double l, double alpha = 1.0) {
 			_h = h;
@@ -38,6 +41,14 @@ namespace SemanticCodeHighlighting.Colorization {
 			var a = Math.Cos(DegreeToRadian*H)*C;
 			var b = Math.Sin(DegreeToRadian*H)*C;
 			return new ColorLAB(Alpha, l, a, b);
+		}
+
+		public Color ToColor() {
+			var workingspace = new RGBWorkingSpaces();
+
+			ColorRGB rgb = new ColorRGB(new ColorXYZ(ToLab(), workingspace.SRGB_D65_Degree2), workingspace.SRGB_D65_Degree2);
+			return Color.FromArgb((byte) rgb.Alpha, (byte) rgb.R, (byte) rgb.G, (byte) rgb.B);
+
 		}
 
 

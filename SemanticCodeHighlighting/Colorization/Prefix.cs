@@ -1,20 +1,18 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace SemanticCodeHighlighting.Colorization {
-	public struct Prefix {
-		public static readonly Prefix None = new Prefix("");
-
+	internal class Prefix {
 		private readonly string _prefix;
 		private readonly string _condition;
 
 		public string Condition { get { return _condition; } }
 
-		public Prefix(string prefix, string condition = "") {
+		public Prefix(string prefix, string condition) {
 			_prefix = prefix;
-			_condition = string.IsNullOrEmpty(condition) ? _prefix : condition;
-			if(!_condition.StartsWith("^")) {
-				_condition = '^' + _condition;
+			if(!condition.StartsWith("^")) {
+				condition = '^' + condition;
 			}
+			_condition = condition;
 		}
 
 		public static bool HasPrefix(string text, Prefix prefix) {

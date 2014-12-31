@@ -19,16 +19,17 @@ namespace SemanticCodeHighlighting {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 #pragma warning restore 67
 
-		internal Classifier(IClassificationTypeRegistryService registry, ITagAggregator<IClassificationTag> aggregator, ITextView textView) {
-			_classification = registry.GetClassificationType(Config.ClassificationName);
+		internal Classifier(IClassificationTypeRegistryService typeRegistry, ITagAggregator<IClassificationTag> aggregator, ITextView textView, IClassificationFormatMap formatMap) {
+			_classification = typeRegistry.GetClassificationType(Config.ClassificationName);
 			_aggregator = aggregator;
-			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer());
+			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer(typeRegistry, formatMap));
 		}
 
 		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			if(spans.Count == 0) {
 				yield break;
 			}
+
 
 			ITextSnapshot snapshot = spans[0].Snapshot;
 			//var contentType = snapshot.TextBuffer.ContentType; //C#
@@ -43,10 +44,18 @@ namespace SemanticCodeHighlighting {
 //				yield return new TagSpan<ClassificationTag>(colorizedSpan.Span, new ClassificationTag(colorizedSpan.Classification));
 //			}
 
+			List<string> classifiedTexts = new List<string>();
+			foreach(var classifiedSpan in tags) {
+				classifiedTexts.AddRange(classifiedSpan.Span.GetSpans(snapshot).Select(span => span.GetText()));
+			}
+			_colorizer.GenerateColors(classifiedTexts.ToArray());
+
 			foreach(var classifiedSpan in tags) {
 
 				foreach(SnapshotSpan span in classifiedSpan.Span.GetSpans(snapshot)) {
-					yield return new TagSpan<ClassificationTag>(span, new ClassificationTag(_classification));
+					var classificationType = _colorizer.GetClassification(span.GetText());
+					if(classificationType == null) continue;
+					yield return new TagSpan<ClassificationTag>(span, new ClassificationTag(classificationType));
 				}
 			}
 		}

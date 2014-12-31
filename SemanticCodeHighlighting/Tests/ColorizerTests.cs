@@ -1,4 +1,5 @@
 ﻿using System;
+using Colorspace;
 using NUnit.Framework;
 using SemanticCodeHighlighting.Colorization;
 
@@ -8,32 +9,19 @@ namespace SemanticCodeHighlighting.Tests {
 
 		[Test]
 		public void ColorizationTest() {
-			string text = "_Test";
 
-			var colorization = new TextColor(text);
+			var workingspace = new RGBWorkingSpaces();
 
-			Assert.AreEqual(colorization.Length, text.Length);
-			Assert.AreEqual(colorization.LowercaseLetters, "est");
-			Assert.IsTrue(String.Equals(colorization.Prefix.ToString(), "_", StringComparison.InvariantCulture));
-			Assert.AreEqual(colorization.UppercaseLetters, "T");
+			var hclColor = new ColorHCL(320, 3, 1);
+			var lab = hclColor.ToLab();
 
-			text = "Test";
-			colorization = new TextColor(text);
-			Assert.IsTrue(String.IsNullOrEmpty(colorization.Prefix.ToString()));
-
-			text = "ITest";
-			colorization = new TextColor(text);
-			Assert.IsTrue(String.Equals(colorization.Prefix.ToString(), "I", StringComparison.InvariantCulture));
-
-			text = "Item";
-			colorization = new TextColor(text);
-			Assert.IsTrue(String.Equals(colorization.Prefix.ToString(), "", StringComparison.InvariantCulture));
-
+			ColorRGB rgb = new ColorRGB(new ColorXYZ(lab, workingspace.SRGB_D65_Degree2), workingspace.SRGB_D65_Degree2);
+			Console.WriteLine(rgb.ToString());
 		}
 
 		[Test]
 		public void PrefixTest() {
-			Prefix prefix = new Prefix("_");
+			Prefix prefix = new Prefix("_", "_");
 			string text = "text";
 
 			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
@@ -53,13 +41,13 @@ namespace SemanticCodeHighlighting.Tests {
 
 			//skipped start of string regex. Should be auto added
 			text = "_Text";
-			prefix = new Prefix("I", "I[A-Z]");
+			prefix = new Prefix("m", "m[A-Z]");
 			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "Item";
 			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
-			text = "IItem";
+			text = "mItem";
 			Assert.IsTrue(Prefix.HasPrefix(text, prefix));
 
 
