@@ -28,6 +28,8 @@ namespace SemanticCodeHighlighting.Colorization {
 
 		private readonly Random _random;
 
+		private bool _updating;
+
 		public Colorizer(IClassificationTypeRegistryService typeRegistry, IClassificationFormatMap formatMap) {
 			_colorizerCache = new Dictionary<string, ColorizedIdentifier>();
 			_typeRegistry = typeRegistry;
@@ -38,12 +40,10 @@ namespace SemanticCodeHighlighting.Colorization {
 
 		public void GenerateColors(params string[] colorizationStrings) {
 			foreach(var text in colorizationStrings) {
-				if(!_colorizerCache.ContainsKey(text)) {
-					_colorizerCache.Add(text, new ColorizedIdentifier(text));
-				}
-			}
 
-			foreach(var identifier in _colorizerCache.Values) {
+				if(_colorizerCache.ContainsKey(text)) continue;
+
+				var identifier = new ColorizedIdentifier(text);
 				Prefix prefix = GetPrefix(identifier.Text);
 				Assert.NotNull(prefix);
 				identifier.Prefix = prefix;
@@ -55,6 +55,8 @@ namespace SemanticCodeHighlighting.Colorization {
 									 _typeRegistry.CreateClassificationType(classificationName, new[] { _baseClassification });
 
 				identifier.Classification = classification;
+				_colorizerCache.Add(text, identifier);
+
 			}
 		}
 
@@ -63,11 +65,16 @@ namespace SemanticCodeHighlighting.Colorization {
 		}
 
 		public void UpdateClassifications() {
-			foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
-				var textProperties = _formatMap.GetTextProperties(identifier.Classification);
-				textProperties = textProperties.SetForeground(identifier.Color.ToColor());
-				_formatMap.SetTextProperties(identifier.Classification, textProperties);
-				identifier.IsDirty = false;
+			try {
+				_updating = true;
+				foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
+					var textProperties = _formatMap.GetTextProperties(identifier.Classification);
+					textProperties = textProperties.SetForeground(identifier.Color.ToColor());
+					_formatMap.SetTextProperties(identifier.Classification, textProperties);
+					identifier.IsDirty = false;
+				}
+			} finally {
+				_updating = false;
 			}
 		}
 

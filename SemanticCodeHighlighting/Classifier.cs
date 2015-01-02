@@ -23,10 +23,12 @@ namespace SemanticCodeHighlighting {
 			_classification = typeRegistry.GetClassificationType(Config.ClassificationName);
 			_aggregator = aggregator;
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer(typeRegistry, formatMap));
-			formatMap.ClassificationFormatMappingChanged += OnFormatMapChanged;
+			textView.LayoutChanged += OnChangedEvent;
+			textView.TextBuffer.Changed += OnChangedEvent;
+			formatMap.ClassificationFormatMappingChanged += OnChangedEvent;
 		}
 
-		private void OnFormatMapChanged(object sender, EventArgs eventArgs) {
+		private void OnChangedEvent(object sender, EventArgs eventArgs) {
 			_colorizer.UpdateClassifications();
 		}
 
