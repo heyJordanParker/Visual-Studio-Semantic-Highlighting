@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 using Colorspace;
 using NUnit.Framework;
 using SemanticCodeHighlighting.Colorization;
@@ -47,6 +48,16 @@ namespace SemanticCodeHighlighting.Tests {
 			Assert.Less(lab.L - hclToLab.L, epsilon);
 			Assert.Less(lab.A - hclToLab.A, epsilon);
 			Assert.Less(lab.B - hclToLab.B, epsilon);
+		}
+
+		[Test]
+		public void ColorToHCLToColor() {
+			var ws = new RGBWorkingSpaces();
+			ColorRGB rgb = new ColorRGB(1, 0, 0);
+			ColorXYZ xyz = new ColorXYZ(rgb, ws.Adobe_D65_Degree2);
+			ColorLAB lab = new ColorLAB(xyz, ws.Adobe_D65_Degree2);
+			ColorHCL hcl = new ColorHCL(lab);
+			Console.WriteLine(hcl.ToColor());
 		}
 
 	}

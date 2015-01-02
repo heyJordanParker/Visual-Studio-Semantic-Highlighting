@@ -26,7 +26,7 @@ namespace SemanticCodeHighlighting.Colorization {
 
 		public string Text { get { return _text; } }
 
-		public bool IsDirty { get { return _isDirty; } }
+		public bool IsDirty { get { return _isDirty; } set { _isDirty = value; } }
 
 		public ColorizedIdentifier(string text) {
 			_text = text;

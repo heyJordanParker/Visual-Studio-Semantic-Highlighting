@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using NUnit.Framework;
@@ -24,11 +26,14 @@ namespace SemanticCodeHighlighting.Colorization {
 		private readonly Dictionary<string, ColorizedIdentifier> _colorizerCache;
 		private readonly IClassificationType _baseClassification;
 
+		private readonly Random _random;
+
 		public Colorizer(IClassificationTypeRegistryService typeRegistry, IClassificationFormatMap formatMap) {
 			_colorizerCache = new Dictionary<string, ColorizedIdentifier>();
 			_typeRegistry = typeRegistry;
 			_formatMap = formatMap;
 			_baseClassification = _typeRegistry.GetClassificationType("identifier");
+			_random = new Random();
 		}
 
 		public void GenerateColors(params string[] colorizationStrings) {
@@ -43,10 +48,9 @@ namespace SemanticCodeHighlighting.Colorization {
 				Assert.NotNull(prefix);
 				identifier.Prefix = prefix;
 
-				var random = new Random();
-				identifier.Color = new ColorHCL(random.Next(360), 25, 61);
+				identifier.Color = CreateColor(identifier);
 
-				var classificationName = identifier.Text + "Classification";
+				var classificationName = '_' + identifier.Text + "Classification";
 				var classification = _typeRegistry.GetClassificationType(classificationName) ??
 									 _typeRegistry.CreateClassificationType(classificationName, new[] { _baseClassification });
 
@@ -61,13 +65,15 @@ namespace SemanticCodeHighlighting.Colorization {
 		public void UpdateClassifications() {
 			foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
 				var textProperties = _formatMap.GetTextProperties(identifier.Classification);
-				textProperties.SetForeground(identifier.Color.ToColor());
+				textProperties = textProperties.SetForeground(identifier.Color.ToColor());
 				_formatMap.SetTextProperties(identifier.Classification, textProperties);
+				identifier.IsDirty = false;
 			}
 		}
 
 
-		private void CreateColor(ColorizedIdentifier identifier) {
+		private ColorHCL CreateColor(ColorizedIdentifier identifier) {
+			return new ColorHCL(_random.Next(360), 25, 61);
 			// take into account prefixes, prioritize capital letters when parsing
 			// a prefix, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}

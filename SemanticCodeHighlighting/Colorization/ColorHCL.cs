@@ -6,6 +6,8 @@ using Colorspace;
 namespace SemanticCodeHighlighting.Colorization {
 	public struct ColorHCL {
 
+		private static readonly RGBWorkingSpaces RGBWorkingSpaces = new RGBWorkingSpaces();
+
 		public const double PI = Math.PI;
 		public const double DegreeToRadian = PI/180;
 
@@ -18,8 +20,6 @@ namespace SemanticCodeHighlighting.Colorization {
 		public double H { get { return _h; } }
 		public double C { get { return _c; } }
 		public double L { get { return _l; } }
-
-		public double Saturation { get { return C*L; } }
 
 		public ColorHCL(double h, double c, double l, double alpha = 1.0) {
 			_h = h;
@@ -44,10 +44,9 @@ namespace SemanticCodeHighlighting.Colorization {
 		}
 
 		public Color ToColor() {
-			var workingspace = new RGBWorkingSpaces();
-
-			ColorRGB rgb = new ColorRGB(new ColorXYZ(ToLab(), workingspace.SRGB_D65_Degree2), workingspace.SRGB_D65_Degree2);
-			return Color.FromArgb((byte) rgb.Alpha, (byte) rgb.R, (byte) rgb.G, (byte) rgb.B);
+			ColorRGB rgb = new ColorRGB(new ColorXYZ(ToLab(), RGBWorkingSpaces.SRGB_D65_Degree2), RGBWorkingSpaces.SRGB_D65_Degree2);
+			Console.WriteLine(rgb);
+			return Color.FromArgb((byte) (rgb.Alpha * 255), (byte) (rgb.R * 255), (byte) (rgb.G * 255), (byte) (rgb.B * 255));
 
 		}
 
