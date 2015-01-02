@@ -13,24 +13,11 @@ using SemanticCodeHighlighting.Colorization;
 namespace SemanticCodeHighlighting {
 
 	class FormatMapWatcher {
-		public class Couple {
-			public IClassificationType classification;
-			public ColorHCL color;
-
-			public Couple(IClassificationType classification, ColorHCL color) {
-				this.classification = classification;
-				this.color = color;
-			}
-
-		}
-
 		private readonly IClassificationFormatMap _formatMap;
 		private IClassificationType _baseClassificationType;
 		private IClassificationTypeRegistryService _typeRegistry;
 		private Colorizer _colorizer;
 		private bool _updating;
-
-		private static Queue<Couple> _actions = new Queue<Couple>(); 
 
 		public FormatMapWatcher(IWpfTextView textView, IClassificationFormatMap formatMap, IClassificationTypeRegistryService typeRegistry) {
 			_formatMap = formatMap;
@@ -56,22 +43,11 @@ namespace SemanticCodeHighlighting {
 
 		}
 
-		public static void AddItem(Couple action) {
-			_actions.Enqueue(action);
-		}
-
 		//TODO move to Colorizer
 		private void Colorize() {
 			try {
 				_updating = true;
 
-
-				while(_actions.Count > 0) {
-					var couple = _actions.Dequeue();
-					var textProperties = _formatMap.GetTextProperties(couple.classification);
-					textProperties.SetForeground(couple.color.ToColor());
-					_formatMap.SetTextProperties(couple.classification, textProperties);
-				}
 //				var classificationTypes = _formatMap.CurrentPriorityOrder;
 //				var allFormats = classificationTypes.Aggregate("", (cur, next) => cur + next + ',');
 //				var classificationFiler = classificationTypes.Where(c => c != null && c.Classification.ToLowerInvariant().Contains("identifier"));
@@ -84,7 +60,7 @@ namespace SemanticCodeHighlighting {
 		}
 
 		private void Bold(IClassificationType classification) {
-			var textFormat = _formatMap.GetTextProperties(_typeRegistry.GetClassificationType("text"));
+			var textFormat = _formatMap.GetTextProperties(_typeRegistry.GetClassificationType("identifier"));
 			var properties = _formatMap.GetTextProperties(classification);
 			var typeface = properties.Typeface;
 

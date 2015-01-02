@@ -22,11 +22,13 @@ namespace SemanticCodeHighlighting.Colorization {
 		private readonly IClassificationFormatMap _formatMap;
 
 		private readonly Dictionary<string, ColorizedIdentifier> _colorizerCache;
+		private readonly IClassificationType _baseClassification;
 
 		public Colorizer(IClassificationTypeRegistryService typeRegistry, IClassificationFormatMap formatMap) {
 			_colorizerCache = new Dictionary<string, ColorizedIdentifier>();
 			_typeRegistry = typeRegistry;
 			_formatMap = formatMap;
+			_baseClassification = _typeRegistry.GetClassificationType("identifier");
 		}
 
 		public void GenerateColors(params string[] colorizationStrings) {
@@ -44,7 +46,11 @@ namespace SemanticCodeHighlighting.Colorization {
 				var random = new Random();
 				identifier.Color = new ColorHCL(random.Next(360), 25, 61);
 
-				
+				var classificationName = identifier.Text + "Classification";
+				var classification = _typeRegistry.GetClassificationType(classificationName) ??
+									 _typeRegistry.CreateClassificationType(classificationName, new[] { _baseClassification });
+
+				identifier.Classification = classification;
 			}
 		}
 
@@ -52,17 +58,16 @@ namespace SemanticCodeHighlighting.Colorization {
 			return DefaultPrefixes.FirstOrDefault(prefix => Prefix.HasPrefix(text, prefix));
 		}
 
+		public void UpdateClassifications() {
+			foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
+				var textProperties = _formatMap.GetTextProperties(identifier.Classification);
+				textProperties.SetForeground(identifier.Color.ToColor());
+				_formatMap.SetTextProperties(identifier.Classification, textProperties);
+			}
+		}
 
-		private void CreateUniqueClassificationTypeForColor(string variableName) {
-			
-			//			_typeRegistry.CreateTransientClassificationType(_baseClassificationType)
-			//			set the color of the classification type
-			//			link Classification Type and variableName
 
-
-			
-
-			
+		private void CreateColor(ColorizedIdentifier identifier) {
 			// take into account prefixes, prioritize capital letters when parsing
 			// a prefix, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}
@@ -70,27 +75,7 @@ namespace SemanticCodeHighlighting.Colorization {
 		//TODO use format map watcher combo
 		public IClassificationType GetClassification(string text) {
 			ColorizedIdentifier identifier;
-			if(_colorizerCache.TryGetValue(text, out identifier)) {
-				IClassificationType classification =
-					_typeRegistry.CreateTransientClassificationType(_typeRegistry.GetClassificationType("text"));
-
-//				Action a = () => {
-//					var textProperties = _formatMap.GetTextProperties(classification);
-//					textProperties.SetForeground(identifier.Color.ToColor());
-//					_formatMap.SetTextProperties(classification, textProperties);
-//				};
-
-
-				FormatMapWatcher.AddItem(new FormatMapWatcher.Couple(classification, identifier.Color));
-				
-
-
-
-
-				identifier.Classification = classification;
-				return classification;
-			}
-			return null;
+			return _colorizerCache.TryGetValue(text, out identifier) ? identifier.Classification : null;
 		}
 	}
 }
