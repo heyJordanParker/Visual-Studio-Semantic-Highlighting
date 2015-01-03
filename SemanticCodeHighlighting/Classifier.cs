@@ -10,18 +10,14 @@ using SemanticCodeHighlighting.Colorization;
 
 namespace SemanticCodeHighlighting {
 
-	public class Classifier : ITagger<ClassificationTag>, IDisposable {
-
-		private readonly ITagAggregator<IClassificationTag> _aggregator;
+	public class Classifier : ITagger<ClassificationTag> {
 		private readonly Colorizer _colorizer;
 		private readonly IClassifier _classifier;
 		private readonly Dictionary<IClassificationType, ClassificationTag> _classificationTagsCache;
 
-
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged = delegate { };
 
-		internal Classifier(IClassificationTypeRegistryService typeRegistry, ITagAggregator<IClassificationTag> aggregator, ITextView textView, IClassificationFormatMap formatMap, IClassifier classifier) {
-			_aggregator = aggregator;
+		internal Classifier(IClassificationTypeRegistryService typeRegistry, ITextView textView, IClassificationFormatMap formatMap, IClassifier classifier) {
 			_classifier = classifier;
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer(typeRegistry, formatMap));
 			textView.LayoutChanged += OnChangedEvent;
@@ -30,7 +26,6 @@ namespace SemanticCodeHighlighting {
 		}
 
 		private void OnChangedEvent(object sender, TextViewLayoutChangedEventArgs eventArgs) {
-			var spans = eventArgs.NewOrReformattedSpans;
 			_colorizer.UpdateClassifications();
 			
 		}
@@ -56,10 +51,6 @@ namespace SemanticCodeHighlighting {
 					yield return new TagSpan<ClassificationTag>(classificationSpan.Span, _classificationTagsCache[classificationType]);
 				}
 			}
-		}
-
-		public void Dispose() {
-			_aggregator.Dispose();
 		}
 	}
 }

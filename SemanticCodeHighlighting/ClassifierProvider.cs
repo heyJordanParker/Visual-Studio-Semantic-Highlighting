@@ -17,9 +17,6 @@ namespace SemanticCodeHighlighting {
 			internal IClassificationTypeRegistryService classificationRegistry;
 
 			[Import]
-			internal IBufferTagAggregatorFactoryService aggregator;
-
-			[Import]
 			internal IClassificationFormatMapService formatMap;
 
 			[Import]
@@ -31,7 +28,6 @@ namespace SemanticCodeHighlighting {
 						() =>
 							new Classifier(
 								classificationRegistry, 
-								aggregator.CreateTagAggregator<IClassificationTag>(textBuffer), 
 								textView,
 								formatMap.GetClassificationFormatMap(textView),
 								classifierAggregator.GetClassifier(textBuffer)
