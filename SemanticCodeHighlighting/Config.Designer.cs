@@ -61,11 +61,11 @@ namespace SemanticCodeHighlighting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SemanticCodeHighlighting.
+        ///   Looks up a localized string similar to identifier.
         /// </summary>
-        internal static string ClassificationName {
+        internal static string BaseClassification {
             get {
-                return ResourceManager.GetString("ClassificationName", resourceCulture);
+                return ResourceManager.GetString("BaseClassification", resourceCulture);
             }
         }
     }

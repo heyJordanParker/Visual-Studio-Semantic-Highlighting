@@ -9,17 +9,18 @@ using NUnit.Framework;
 
 namespace SemanticCodeHighlighting.Colorization {
 	public class Colorizer {
-		private static readonly Prefix[] DefaultPrefixes = {
-			new Prefix("_Member", "_"),   
-			new Prefix("m_Member", "m_"), 
-			new Prefix("mMember", "m[A-Z]"), 
-			new Prefix("Verbatim", "@"),
-			new Prefix("Interface", "I[A-Z]"),
-			new Prefix("lowercase", "[a-z]"),
-			new Prefix("Uppercase", "[A-Z]"),
+		private static readonly Filter[] DefaultFilters = {
+			new Filter("_Member", "^_"),   
+			new Filter("m_Member", "^m_"), 
+			new Filter("mMember", "^m[A-Z]"), 
+			new Filter("Verbatim", "^@"),
+			new Filter("Interface", "^I[A-Z]"),
+			new Filter("lowercase", "^[a-z]"),
+			new Filter("Uppercase", "^[A-Z]"),
 		};
 
-		private const double BaseLighting = 0.4;
+		public const string ClassificationPrefix = "SemanticCodeHighlighting.ColorizerClassification.";
+
 		private readonly IClassificationTypeRegistryService _typeRegistry;
 		private readonly IClassificationFormatMap _formatMap;
 
@@ -38,35 +39,40 @@ namespace SemanticCodeHighlighting.Colorization {
 			_random = new Random();
 		}
 
-		public void GenerateColors(params string[] colorizationStrings) {
-			foreach(var text in colorizationStrings) {
+		private ColorizedIdentifier GenerateIdentifier(string text) {
+			var identifier = new ColorizedIdentifier(text);
+			Filter filter = GetPrefix(identifier.Text);
 
-				if(_colorizerCache.ContainsKey(text)) continue;
+			//TODO Set default Filter
+			Assert.NotNull(filter);
+			identifier.Filter = filter;
 
-				var identifier = new ColorizedIdentifier(text);
-				Prefix prefix = GetPrefix(identifier.Text);
-				Assert.NotNull(prefix);
-				identifier.Prefix = prefix;
+			identifier.Color = CreateColor(identifier);
 
-				identifier.Color = CreateColor(identifier);
-
-				var classificationName = '_' + identifier.Text + "Classification";
-				var classification = _typeRegistry.GetClassificationType(classificationName) ??
-									 _typeRegistry.CreateClassificationType(classificationName, new[] { _baseClassification });
-
-				identifier.Classification = classification;
-				_colorizerCache.Add(text, identifier);
-
+			var classificationName = ClassificationPrefix + identifier.Text;
+			IClassificationType classification;
+			if(_typeRegistry.GetClassificationType(classificationName) != null) {
+				classification = _typeRegistry.GetClassificationType(classificationName);
+				identifier.IsDirty = false;
+			} else {
+				classification = _typeRegistry.CreateClassificationType(classificationName, new[] { _baseClassification });
+				identifier.IsDirty = true;
 			}
+
+			identifier.Classification = classification;
+			return identifier;
 		}
 
-		private Prefix GetPrefix(string text) {
-			return DefaultPrefixes.FirstOrDefault(prefix => Prefix.HasPrefix(text, prefix));
+		private Filter GetPrefix(string text) {
+			return DefaultFilters.FirstOrDefault(prefix => Filter.HasPrefix(text, prefix));
 		}
 
 		public void UpdateClassifications() {
+			if(_updating)
+				return;
 			try {
 				_updating = true;
+				
 				foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
 					var textProperties = _formatMap.GetTextProperties(identifier.Classification);
 					textProperties = textProperties.SetForeground(identifier.Color.ToColor());
@@ -80,15 +86,16 @@ namespace SemanticCodeHighlighting.Colorization {
 
 
 		private ColorHCL CreateColor(ColorizedIdentifier identifier) {
+			//TODO color generation
 			return new ColorHCL(_random.Next(360), 25, 61);
-			// take into account prefixes, prioritize capital letters when parsing
-			// a prefix, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
+			// take into account prefixes, prioritize capital letters when generating
+			// a Filter, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}
 
-		//TODO use format map watcher combo
-		public IClassificationType GetClassification(string text) {
-			ColorizedIdentifier identifier;
-			return _colorizerCache.TryGetValue(text, out identifier) ? identifier.Classification : null;
+		public IClassificationType GenerateClassification(string text) {
+			if(!_colorizerCache.ContainsKey(text))
+				_colorizerCache.Add(text, GenerateIdentifier(text));
+			return _colorizerCache[text].Classification;
 		}
 	}
 }

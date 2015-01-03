@@ -1,22 +1,20 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace SemanticCodeHighlighting.Colorization {
-	internal class Prefix {
+	internal class Filter {
+		//TODO filters should have associated formatting rules accompanying them
 		private readonly string _prefix;
 		private readonly string _condition;
 
 		public string Condition { get { return _condition; } }
 
-		public Prefix(string prefix, string condition) {
+		public Filter(string prefix, string condition) {
 			_prefix = prefix;
-			if(!condition.StartsWith("^")) {
-				condition = '^' + condition;
-			}
 			_condition = condition;
 		}
 
-		public static bool HasPrefix(string text, Prefix prefix) {
-			return Regex.IsMatch(text, prefix.Condition);
+		public static bool HasPrefix(string text, Filter filter) {
+			return Regex.IsMatch(text, filter.Condition);
 		}
 
 		public override string ToString() {
@@ -25,10 +23,10 @@ namespace SemanticCodeHighlighting.Colorization {
 
 		public override bool Equals(object obj) {
 			if(ReferenceEquals(null, obj)) return false;
-			return obj is Prefix && Equals((Prefix) obj);
+			return obj is Filter && Equals((Filter) obj);
 		}
 
-		public bool Equals(Prefix other) {
+		public bool Equals(Filter other) {
 			return string.Equals(_prefix, other._prefix) && string.Equals(_condition, other._condition);
 		}
 

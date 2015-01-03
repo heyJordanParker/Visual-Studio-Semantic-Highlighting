@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace SemanticCodeHighlighting {
+	// ReSharper disable once ClassNeverInstantiated.Global
 	public class ClassifierProvider {
 
 		[Export(typeof(IViewTaggerProvider))]
@@ -19,10 +20,23 @@ namespace SemanticCodeHighlighting {
 			internal IBufferTagAggregatorFactoryService aggregator;
 
 			[Import]
-			internal IClassificationFormatMapService formatMapService;
+			internal IClassificationFormatMapService formatMap;
 
-			public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
-				return new Classifier(classificationRegistry, aggregator.CreateTagAggregator<IClassificationTag>(buffer), textView, formatMapService.GetClassificationFormatMap(textView)) as ITagger<T>;
+			[Import]
+			internal IClassifierAggregatorService classifierAggregator;
+
+			public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer textBuffer) where T : ITag {
+				var tagger =
+					textView.Properties.GetOrCreateSingletonProperty(
+						() =>
+							new Classifier(
+								classificationRegistry, 
+								aggregator.CreateTagAggregator<IClassificationTag>(textBuffer), 
+								textView,
+								formatMap.GetClassificationFormatMap(textView),
+								classifierAggregator.GetClassifier(textBuffer)
+								) as ITagger<T>);
+				return tagger;
 			}
 		} 
 	}

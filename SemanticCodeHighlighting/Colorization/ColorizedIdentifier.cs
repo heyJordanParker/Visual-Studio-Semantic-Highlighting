@@ -10,7 +10,7 @@ namespace SemanticCodeHighlighting.Colorization {
 		private IClassificationType _classification;
 		private bool _isDirty = false;
 
-		public Prefix Prefix { get; set; }
+		public Filter Filter { get; set; }
 
 		public ColorHCL Color { get; set; }
 
