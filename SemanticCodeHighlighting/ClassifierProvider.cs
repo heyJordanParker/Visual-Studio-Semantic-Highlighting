@@ -23,16 +23,14 @@ namespace SemanticCodeHighlighting {
 			internal IClassifierAggregatorService classifierAggregator;
 
 			public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer textBuffer) where T : ITag {
-				var tagger =
-					textView.Properties.GetOrCreateSingletonProperty(
-						() =>
-							new Classifier(
-								classificationRegistry, 
-								textView,
-								formatMap.GetClassificationFormatMap(textView),
-								classifierAggregator.GetClassifier(textBuffer)
-								) as ITagger<T>);
-				return tagger;
+				return textView.Properties.GetOrCreateSingletonProperty(
+					() =>
+						new Tagger(
+							classificationRegistry, 
+							textView,
+							formatMap.GetClassificationFormatMap(textView),
+							classifierAggregator.GetClassifier(textBuffer)
+							) as ITagger<T>);
 			}
 		} 
 	}

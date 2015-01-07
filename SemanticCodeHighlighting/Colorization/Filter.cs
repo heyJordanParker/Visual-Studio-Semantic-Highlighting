@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace SemanticCodeHighlighting.Colorization {
-	internal class Filter {
+	public class Filter {
 		//TODO filters should have associated formatting rules accompanying them
 		private readonly string _prefix;
 		private readonly string _condition;

@@ -3,12 +3,14 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace SemanticCodeHighlighting.Colorization {
-	internal class ColorizedIdentifier {
+	public class ColorizedIdentifier {
 		private readonly string _text;
 		private IClassificationType _classification;
-		private bool _isDirty = false;
+		private ClassificationTag _classificationTag;
+		private bool _isDirty;
 
 		public Filter Filter { get; set; }
 
@@ -19,10 +21,12 @@ namespace SemanticCodeHighlighting.Colorization {
 			set {
 				if(value != null && _classification != value) {
 					_classification = value;
+					_classificationTag = new ClassificationTag(_classification);
 					_isDirty = true;
 				}
 			}
 		}
+		public ClassificationTag ClassificationTag { get { return _classificationTag; } }
 
 		public string Text { get { return _text; } }
 

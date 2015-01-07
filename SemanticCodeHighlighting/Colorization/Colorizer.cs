@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -19,11 +20,17 @@ namespace SemanticCodeHighlighting.Colorization {
 			new Filter("Uppercase", "^[A-Z]"),
 		};
 
+		public ColorizedIdentifier this[string text] {
+			get {
+				if(!_colorizerCache.ContainsKey(text))
+					_colorizerCache.Add(text, GenerateIdentifier(text));
+				return _colorizerCache[text];
+			}
+		}
+	
 		public const string ClassificationPrefix = "SemanticCodeHighlighting.ColorizerClassification.";
 
 		private readonly IClassificationTypeRegistryService _typeRegistry;
-		private readonly IClassificationFormatMap _formatMap;
-
 		private readonly Dictionary<string, ColorizedIdentifier> _colorizerCache;
 		private readonly IClassificationType _baseClassification;
 
@@ -31,10 +38,9 @@ namespace SemanticCodeHighlighting.Colorization {
 
 		private bool _updating;
 
-		public Colorizer(IClassificationTypeRegistryService typeRegistry, IClassificationFormatMap formatMap) {
+		public Colorizer(IClassificationTypeRegistryService typeRegistry) {
 			_colorizerCache = new Dictionary<string, ColorizedIdentifier>();
 			_typeRegistry = typeRegistry;
-			_formatMap = formatMap;
 			_baseClassification = _typeRegistry.GetClassificationType("identifier");
 			_random = new Random();
 		}
@@ -67,19 +73,20 @@ namespace SemanticCodeHighlighting.Colorization {
 			return DefaultFilters.FirstOrDefault(prefix => Filter.HasPrefix(text, prefix));
 		}
 
-		public void UpdateClassifications() {
+		public void UpdateClassifications(IClassificationFormatMap formatMap) {
 			if(_updating)
 				return;
 			try {
 				_updating = true;
-				
+//				formatMap.BeginBatchUpdate();
 				foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
-					var textProperties = _formatMap.GetTextProperties(identifier.Classification);
+					var textProperties = formatMap.GetTextProperties(identifier.Classification);
 					textProperties = textProperties.SetForeground(identifier.Color.ToColor());
-					_formatMap.SetTextProperties(identifier.Classification, textProperties);
+					formatMap.SetTextProperties(identifier.Classification, textProperties);
 					identifier.IsDirty = false;
 				}
 			} finally {
+//				formatMap.EndBatchUpdate();
 				_updating = false;
 			}
 		}
@@ -92,10 +99,8 @@ namespace SemanticCodeHighlighting.Colorization {
 			// a Filter, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}
 
-		public IClassificationType GenerateClassification(string text) {
-			if(!_colorizerCache.ContainsKey(text))
-				_colorizerCache.Add(text, GenerateIdentifier(text));
-			return _colorizerCache[text].Classification;
+		public ColorizedIdentifier GetColorization(string text) {
+			return this[text];
 		}
 	}
 }
