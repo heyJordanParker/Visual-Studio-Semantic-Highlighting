@@ -29,14 +29,8 @@ namespace SemanticCodeHighlighting {
 		}
 
 		private void OnLayoutChangedEvent(object sender, TextViewLayoutChangedEventArgs textViewLayoutChangedEventArgs) {
-			_colorizer.UpdateClassifications(_formatMap);
-
-//			if(!updated && eventArgs.NewSnapshot == eventArgs.OldSnapshot)
-//				return;
-//
-//			var @event = TagsChanged;
-//			if(@event != null)
-//				@event(this, new SnapshotSpanEventArgs(new SnapshotSpan(eventArgs.NewSnapshot, 0, eventArgs.NewSnapshot.Length)));
+			if(textViewLayoutChangedEventArgs.NewSnapshot == textViewLayoutChangedEventArgs.OldSnapshot)
+				_colorizer.UpdateClassifications(_formatMap);
 		}
 
 		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
