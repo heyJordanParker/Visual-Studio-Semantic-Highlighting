@@ -16,14 +16,12 @@ namespace SemanticCodeHighlighting {
 		private readonly Colorizer _colorizer;
 		private readonly IClassificationFormatMap _formatMap;
 		private readonly IClassifier _classifier;
-		private readonly ITextBuffer _textBuffer;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
 		internal Tagger(IClassificationTypeRegistryService typeRegistry, ITextView textView, IClassificationFormatMap formatMap, IClassifier classifier) {
 			_classifier = classifier;
 			_colorizer = textView.Properties.GetOrCreateSingletonProperty(() => new Colorizer(typeRegistry));
-			_textBuffer = textView.TextBuffer;
 			_formatMap = formatMap;
 			textView.LayoutChanged += OnLayoutChangedEvent;
 		}

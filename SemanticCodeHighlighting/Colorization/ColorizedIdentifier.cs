@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
+﻿using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace SemanticCodeHighlighting.Colorization {

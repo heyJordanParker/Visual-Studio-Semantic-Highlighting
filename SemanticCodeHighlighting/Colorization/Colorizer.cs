@@ -78,7 +78,7 @@ namespace SemanticCodeHighlighting.Colorization {
 				return;
 			try {
 				_updating = true;
-//				formatMap.BeginBatchUpdate();
+				formatMap.BeginBatchUpdate();
 				foreach(var identifier in _colorizerCache.Values.Where(i => i.IsDirty)) {
 					var textProperties = formatMap.GetTextProperties(identifier.Classification);
 					textProperties = textProperties.SetForeground(identifier.Color.ToColor());
@@ -86,7 +86,7 @@ namespace SemanticCodeHighlighting.Colorization {
 					identifier.IsDirty = false;
 				}
 			} finally {
-//				formatMap.EndBatchUpdate();
+				formatMap.EndBatchUpdate();
 				_updating = false;
 			}
 		}
