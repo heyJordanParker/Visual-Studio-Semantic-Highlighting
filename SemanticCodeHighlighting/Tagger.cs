@@ -28,7 +28,7 @@ namespace SemanticCodeHighlighting {
 			textView.LayoutChanged += OnLayoutChangedEvent;
 		}
 
-		private void OnLayoutChangedEvent(object sender, TextContentChangedEventArgs textContentChangedEventArgs) {
+		private void OnLayoutChangedEvent(object sender, TextViewLayoutChangedEventArgs textViewLayoutChangedEventArgs) {
 			_colorizer.UpdateClassifications(_formatMap);
 
 //			if(!updated && eventArgs.NewSnapshot == eventArgs.OldSnapshot)
