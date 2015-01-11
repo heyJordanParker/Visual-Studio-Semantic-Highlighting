@@ -65,7 +65,7 @@
   <ItemGroup>
     <Compile Include="Tagger.cs" />
     <Compile Include="ClassifierProvider.cs" />
-    <Compile Include="Colorization\Filter.cs" />
+    <Compile Include="Colorization\Prefix.cs" />
     <Compile Include="Colorization\ColorizedIdentifier.cs" />
     <Compile Include="Colorization\ColorHCL.cs" />
     <Compile Include="Tests\ColorHCLTests.cs" />

@@ -8,7 +8,7 @@ namespace SemanticCodeHighlighting.Colorization {
 		private ClassificationTag _classificationTag;
 		private bool _isDirty;
 
-		public Filter Filter { get; set; }
+		public Prefix Prefix { get; set; }
 
 		public ColorHCL Color { get; set; }
 

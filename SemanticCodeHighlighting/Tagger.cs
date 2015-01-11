@@ -27,8 +27,10 @@ namespace SemanticCodeHighlighting {
 		}
 
 		private void OnLayoutChangedEvent(object sender, TextViewLayoutChangedEventArgs textViewLayoutChangedEventArgs) {
-			if(textViewLayoutChangedEventArgs.NewSnapshot == textViewLayoutChangedEventArgs.OldSnapshot)
+			//TODO:FIX when editing an  OnLayoutChanged event is raised with all of the colorized fields in it. this causes the text to blink
+			if(textViewLayoutChangedEventArgs.NewSnapshot.Length == textViewLayoutChangedEventArgs.OldSnapshot.Length) {
 				_colorizer.UpdateClassifications(_formatMap);
+			}
 		}
 
 		public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
@@ -39,7 +41,9 @@ namespace SemanticCodeHighlighting {
 
 			foreach(var snapshotSpan in spans) {
 				var classifications = _classifier.GetClassificationSpans(snapshotSpan);
-				foreach(var classificationSpan in classifications.Where(span => span.ClassificationType.Classification.Equals(Config.BaseClassification))) {
+				foreach(var classificationSpan in classifications) {
+					if(!classificationSpan.ClassificationType.Classification.Equals(Config.BaseClassification)) continue;
+
 					var colorization = _colorizer.GetColorization(classificationSpan.Span.GetText());
 					yield return new TagSpan<ClassificationTag>(classificationSpan.Span, colorization.ClassificationTag);
 				}

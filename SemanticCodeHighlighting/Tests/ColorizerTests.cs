@@ -20,35 +20,35 @@ namespace SemanticCodeHighlighting.Tests {
 		}
 
 		[Test]
-		public void FilterTest() {
-			Filter filter = new Filter("_", "_");
+		public void PrefixTest() {
+			Prefix prefix = new Prefix("_", "_");
 			string text = "text";
 
-			Assert.IsFalse(Filter.HasPrefix(text, filter));
+			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "_Text";
-			Assert.IsTrue(Filter.HasPrefix(text, filter));
+			Assert.IsTrue(Prefix.HasPrefix(text, prefix));
 
 			//with start of string regex
-			filter = new Filter("I", "^I[A-Z]");
-			Assert.IsFalse(Filter.HasPrefix(text, filter));
+			prefix = new Prefix("I", "^I[A-Z]");
+			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "Item";
-			Assert.IsFalse(Filter.HasPrefix(text, filter));
+			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "IItem";
-			Assert.IsTrue(Filter.HasPrefix(text, filter));
+			Assert.IsTrue(Prefix.HasPrefix(text, prefix));
 
 			//skipped start of string regex. Should be auto added
 			text = "_Text";
-			filter = new Filter("m", "m[A-Z]");
-			Assert.IsFalse(Filter.HasPrefix(text, filter));
+			prefix = new Prefix("m", "m[A-Z]");
+			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "Item";
-			Assert.IsFalse(Filter.HasPrefix(text, filter));
+			Assert.IsFalse(Prefix.HasPrefix(text, prefix));
 
 			text = "mItem";
-			Assert.IsTrue(Filter.HasPrefix(text, filter));
+			Assert.IsTrue(Prefix.HasPrefix(text, prefix));
 
 
 		}
