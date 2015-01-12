@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Text.Tagging;
-using NUnit.Framework;
 using SemanticCodeHighlighting.Colorization;
 
 namespace SemanticCodeHighlighting {
@@ -17,7 +13,7 @@ namespace SemanticCodeHighlighting {
 		private readonly IClassificationFormatMap _formatMap;
 		private readonly IClassifier _classifier;
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs> TagsChanged = (sender, args) => { };
 
 		internal Tagger(IClassificationTypeRegistryService typeRegistry, ITextView textView, IClassificationFormatMap formatMap, IClassifier classifier) {
 			_classifier = classifier;

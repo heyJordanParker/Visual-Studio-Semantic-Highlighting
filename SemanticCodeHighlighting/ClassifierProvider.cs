@@ -10,7 +10,7 @@ namespace SemanticCodeHighlighting {
 	public class ClassifierProvider {
 
 		[Export(typeof(IViewTaggerProvider))]
-		[ContentType("code")]
+		[ContentType("CSharp")]
 		[TagType(typeof(ClassificationTag))]
 		public class KeywordClassifierProvider : IViewTaggerProvider {
 			[Import]

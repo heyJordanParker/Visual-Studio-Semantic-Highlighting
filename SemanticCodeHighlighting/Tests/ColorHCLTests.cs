@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media;
 using Colorspace;
 using NUnit.Framework;
 using SemanticCodeHighlighting.Colorization;

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Tagging;
-using NUnit.Framework;
 
 namespace SemanticCodeHighlighting.Colorization {
 	public class Colorizer{
@@ -41,7 +36,7 @@ namespace SemanticCodeHighlighting.Colorization {
 		public Colorizer(IClassificationTypeRegistryService typeRegistry) {
 			_colorizerCache = new Dictionary<string, ColorizedIdentifier>();
 			_typeRegistry = typeRegistry;
-			_baseClassification = _typeRegistry.GetClassificationType("identifier");
+			_baseClassification = _typeRegistry.GetClassificationType(Config.BaseClassification);
 		}
 
 		private ColorizedIdentifier GenerateIdentifier(string text) {
@@ -96,8 +91,8 @@ namespace SemanticCodeHighlighting.Colorization {
 			var text = identifier.Text;
 			text = Regex.Replace(text, identifier.Prefix.ToString(), "");
 
-			int chroma = 25;
-			int luminance = 50;
+			double chroma = 25;
+			double luminance = 50;
 			int[] hueLimit = { 0, 360 };
 
 			var prefixIndex = Array.IndexOf(DefaultPrefixes, identifier.Prefix);
@@ -107,18 +102,21 @@ namespace SemanticCodeHighlighting.Colorization {
 					hueLimit[1] = 150;
 					break;
 				case 5: //public
-					hueLimit[0] = 150;
-					hueLimit[1] = 280;
-					if(String.IsNullOrEmpty(Regex.Replace(text, "[^a-z]", ""))) 
-						Console.WriteLine("ALL CAPS");
+					if(String.IsNullOrEmpty(Regex.Replace(text, "[^a-z]", ""))) { //ALL Caps
+						chroma = 14.5;
+						luminance = 66;
+					} else {
+						chroma = 20;
+						luminance = 66.5;
+					}
 					break;
 				case 6: //@
 					hueLimit[0] = 320;
 					hueLimit[1] = 340;
 					break;
 				default: //private
-					chroma = 20;
-					luminance = 66;
+					chroma = 35.7;
+					luminance = 66.5;
 					break;
 			}
 
@@ -131,42 +129,42 @@ namespace SemanticCodeHighlighting.Colorization {
 			var uppercase = Regex.Replace(text, "[^A-Z]","");
 			var lowercase = Regex.Replace(text, "[^a-z]","");
 
-			if(lowercase.Length < lowercaseCharacters) {
-				lowercase = String.Concat(lowercase, new string('a', lowercaseCharacters - lowercase.Length));
-			}
-			if(uppercase.Length < uppercaseCharacters) {
-				uppercase = String.Concat(uppercase, new string('A', uppercaseCharacters - uppercase.Length));
-			}
-
 			double huePercentage = 0;
 			double hueStep = 16.67; //6 steps
 
 			if(!Char.IsLower(firstLetter))
 				huePercentage += hueStep;
-			huePercentage += hueStep*2*LetterToPercentage(firstLetter);
+			huePercentage += hueStep*3*LetterToPercentage(firstLetter);
 
 			double lowercasePercentage = 0;
-			for(int i = 0; i < lowercaseCharacters; ++i) {
+			for(int i = 0; i < Math.Min(lowercaseCharacters, lowercase.Length); ++i) {
 				lowercasePercentage += LetterToPercentage(lowercase[i]);
 			}
 			lowercasePercentage = lowercasePercentage/lowercaseCharacters;
 
-			huePercentage += hueStep*2*lowercasePercentage;
+			huePercentage += hueStep*lowercasePercentage;
 
 			double uppercasePercentage = 0;
-			for(int i = 0; i < uppercaseCharacters; ++i) {
+			for(int i = 0; i < Math.Min(uppercaseCharacters, uppercase.Length); ++i) {
 				uppercasePercentage += LetterToPercentage(uppercase[i]);
 			}
 			uppercasePercentage = uppercasePercentage / uppercaseCharacters;
 
 			huePercentage += hueStep*uppercasePercentage;
 
+			if(Regex.IsMatch(text, "[0-9]$")) {
+				var number = int.Parse(text[text.Length - 1].ToString());
+				++number;
+				huePercentage += hueStep*number/10.0;
+			}
+
+			huePercentage += hueStep*2*text.Length/15.0;
+
+
 			if(huePercentage > 100) huePercentage = 100;
 			huePercentage /= 100.0;
 
 			return new ColorHCL(hueLimit[0] + huePercentage * (hueLimit[1] - hueLimit[0]), chroma, luminance);
-			// take into account prefixes, prioritize capital letters when generating
-			// a Prefix, a lowercase first letter or a higher case first letter could introduce variation to the saturation and lightness
 		}
 
 		[DebuggerStepThrough]
@@ -175,8 +173,6 @@ namespace SemanticCodeHighlighting.Colorization {
 			const byte z = (byte) 'z';
 			const byte A = (byte) 'A';
 			const byte Z = (byte) 'Z';
-
-			byte letterByte = (byte) letter;
 
 			if(letter >= a && letter <= z)
 				return (letter - a) / 25.0;
